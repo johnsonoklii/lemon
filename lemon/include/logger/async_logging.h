@@ -23,7 +23,7 @@ public:
     AsyncLogging(const AsyncDoCallback& cb, int flush_interval);
     ~AsyncLogging();
 
-    void pushMsg(inner_message const& msg);
+    void pushMsg(const inner_message& msg);
 
     void do_done();
 

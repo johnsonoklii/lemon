@@ -36,9 +36,8 @@ void AsyncLogging::do_done() {
     }
 }
 
-void AsyncLogging::pushMsg(inner_message const& msg) {
+void AsyncLogging::pushMsg(const inner_message& msg) {
     assert(m_running);
-
     std::lock_guard<std::mutex> lock(m_mutex);
     if (m_curBuffer.avail() > 0) {
         m_curBuffer.push(msg);
@@ -102,8 +101,8 @@ void AsyncLogging::thread_worker() {
             }
             
             for (const auto& buffer : buffers_write) {
-                for (auto& it : buffer) {
-                    m_do_callback(it.msg);
+                for (const auto& it : buffer) {
+                    m_do_callback(it.msg.c_str());
                 }
             }
 

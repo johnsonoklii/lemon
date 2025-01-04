@@ -13,8 +13,7 @@ namespace log {
 class LogFileAppender : public LogAppenderInterface
                         , public std::enable_shared_from_this<LogFileAppender> {
 public:
-    LogFileAppender(const char* file_name, bool is_async, int roll_size
-                                , int flush_interval = 3, int check_everyn = 1024, bool thread_safe = false);
+    LogFileAppender(const char* file_name, bool is_async, int roll_size, int flush_interval, int check_everyn = 1024, bool thread_safe = false);
     ~LogFileAppender();
     virtual void append(const char* msg) override;
 

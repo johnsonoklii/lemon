@@ -17,7 +17,7 @@ public:
                 , bool async = true
                 , bool console = true
                 , int flush_interval = 3
-                , size_t rool_size = 1024 * 1024 * 6);
+                , size_t rool_size = 1024 * 1024 * 64);
 
     ~LogConfig();
 

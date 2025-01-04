@@ -11,7 +11,8 @@ namespace log {
 enum { kSmallBuffer = 4096, kLargeBuffer = 65536 };
 
 struct inner_message {
-    const char* msg;
+    // const char* msg;
+    std::string msg;
 };
 
 template <int SIZE>
@@ -41,7 +42,9 @@ public:
     
     void push(const inner_message& msg) {
         if (avail() > 0) {
-            *m_current++ = msg;
+            *m_current = msg;
+            m_current++;
+            // printf("push msg: %s", m_current->msg);
         }
     }
 

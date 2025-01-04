@@ -10,7 +10,7 @@ int main()  {
     LogConfig::Ptr config = std::make_shared<LogConfig>();
     config->setLevel(LogLevel::WARN);
     config->setConsole(false);
-    config->setFile("./log2.txt");
+    config->setFile("./log2");
 
     Logger logger("user");
     logger.setConfig(config);

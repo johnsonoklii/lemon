@@ -40,8 +40,8 @@ void Logger::log(LogLevel level, const char* file_name, int line, const char* ms
         return;
     }
 
-    // FIXME: 由一个formatter类统一处理
-    char buffer[1024];
+    // FIXME: 由一个formatter类统一处理, 移到子线程中处理
+    char buffer[strlen(msg)+200];
     snprintf(buffer, sizeof(buffer), "[%s][%s][%s][%s:%d] %s"
                                     , base::Timestamp::now().toString().data()
                                     , m_name
