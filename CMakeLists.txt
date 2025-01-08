@@ -16,13 +16,13 @@ set(CXX_FLAGS
 string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
 # OUTPUT
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 
 # INCLUDE
 include_directories(
-  ${PROJECT_SOURCE_DIR}
+  ${PROJECT_SOURCE_DIR}/src/include
   /usr/local/include
   /usr/include
 )
@@ -33,5 +33,5 @@ link_directories(
     /usr/lib
 )
 
-add_subdirectory(lemon/src)
-add_subdirectory(lemon/example)
+add_subdirectory(src)
+add_subdirectory(example)
