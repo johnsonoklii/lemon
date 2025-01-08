@@ -1,5 +1,5 @@
-#ifndef LOG_LEVEL_H
-#define LOG_LEVEL_H
+#ifndef LEMON_LOG_LEVEL_H
+#define LEMON_LOG_LEVEL_H
 
 namespace lemon {
 namespace log {

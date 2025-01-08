@@ -1,5 +1,5 @@
-#ifndef LOG_BUFFER_H
-#define LOG_BUFFER_H
+#ifndef LEMON_LOG_BUFFER_H
+#define LEMON_LOG_BUFFER_H
 
 #include <cstddef>
 #include <string>
@@ -12,7 +12,8 @@ namespace log {
 enum { kSmallBuffer = 4096, kLargeBuffer = 65536 };
 
 struct inner_message {
-    // const char* msg;
+    // FIXME: 为什么const char* 会出现乱码?
+    // const char* msg; 
     std::string msg;
 };
 

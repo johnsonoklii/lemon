@@ -1,5 +1,5 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef LEMON_LOGGER_H
+#define LEMON_LOGGER_H
 
 #include <string>
 #include <unordered_map>

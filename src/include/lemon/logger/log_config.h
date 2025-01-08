@@ -1,5 +1,5 @@
-#ifndef LOG_CONFIG_H
-#define LOG_CONFIG_H
+#ifndef LEMON_LOG_CONFIG_H
+#define LEMON_LOG_CONFIG_H
 
 #include <memory>
 

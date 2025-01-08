@@ -1,5 +1,5 @@
-#ifndef CONSOLE_APPENDER_H_
-#define CONSOLE_APPENDER_H_
+#ifndef LEMON_CONSOLE_APPENDER_H_
+#define LEMON_CONSOLE_APPENDER_H_
 
 #include "lemon/logger/log_appender.h"
 

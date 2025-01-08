@@ -1,5 +1,5 @@
-#ifndef LOG_APPENDER_H
-#define LOG_APPENDER_H
+#ifndef LEMON_LOG_APPENDER_H
+#define LEMON_LOG_APPENDER_H
 
 #include <unistd.h>
 #include <memory>

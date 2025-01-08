@@ -1,5 +1,5 @@
-#ifndef NOCOPYABLE_H
-#define NOCOPYABLE_H
+#ifndef LEMON_NOCOPYABLE_H
+#define LEMON_NOCOPYABLE_H
 
 namespace lemon {
 namespace base {

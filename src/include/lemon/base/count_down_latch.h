@@ -1,5 +1,5 @@
-#ifndef COUNT_DOWN_LATH_H_
-#define COUNT_DOWN_LATH_H_
+#ifndef LEMON_COUNT_DOWN_LATH_H_
+#define LEMON_COUNT_DOWN_LATH_H_
 
 #include <mutex>
 #include <condition_variable>

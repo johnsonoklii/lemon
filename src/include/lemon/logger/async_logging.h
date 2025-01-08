@@ -1,5 +1,5 @@
-#ifndef ASYNC_LOGGING_H
-#define ASYNC_LOGGING_H
+#ifndef LEMON_ASYNC_LOGGING_H
+#define LEMON_ASYNC_LOGGING_H
 
 #include <memory>
 #include <thread>

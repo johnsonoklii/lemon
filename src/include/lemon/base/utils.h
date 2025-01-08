@@ -1,5 +1,5 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef LEMON_UTILS_H
+#define LEMON_UTILS_H
 
 #include <sys/types.h>
 

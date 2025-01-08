@@ -1,5 +1,5 @@
-#ifndef LOG_FILE_APPENDER_H_
-#define LOG_FILE_APPENDER_H_
+#ifndef LEMON_LOG_FILE_APPENDER_H_
+#define LEMON_LOG_FILE_APPENDER_H_
 
 #include <memory>
 #include <mutex>

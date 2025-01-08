@@ -1,5 +1,5 @@
-#ifndef PROCESSINFO_H
-#define PROCESSINFO_H
+#ifndef LEMON_PROCESSINFO_H
+#define LEMON_PROCESSINFO_H
 
 namespace lemon {
 namespace base {
