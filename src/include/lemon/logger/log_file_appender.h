@@ -23,22 +23,22 @@ public:
 private:
     enum { kRollPerSeconds = 60 * 60 * 24 };
 
-    void fwrite_unlocked(const char* msg);
-    void fflush_unlocked(const time_t* cache_now = nullptr);
+    void fwriteUnlocked(const char* msg);
+    void fflushUnlocked(const time_t* cache_now = nullptr);
     void write(const char* msg, size_t len);
 
-    void roll_file(const time_t* cache_now = nullptr);
-    void roll_file_byday(time_t& now);
-    void roll_file_bysize();
+    void rollFile(const time_t* cache_now = nullptr);
+    void rollFileByDay(time_t& now);
+    void rollFileBySize();
     void check(time_t& now);
 
-    void reset_written() { m_writen_bytes = 0; }
+    void resetWritten() { m_writen_bytes = 0; }
 
-    void mk_new_file(const char* file_name);
+    void mkNewFile(const char* file_name);
 
     void close();
 
-    const char* get_log_file_name(time_t& now);
+    const char* getLogFileName(time_t& now);
 
     const char* m_file_name;
     bool m_async;

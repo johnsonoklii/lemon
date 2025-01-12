@@ -29,7 +29,7 @@ LogFileAppender::LogFileAppender(const char* file_name, bool async, int roll_siz
         , m_file(nullptr)
         , m_async_logging(nullptr)
         , m_mutex(m_thread_safe ? new std::mutex() : nullptr) {
-    roll_file();
+    rollFile();
 
     if (m_async) {
         m_async_logging = new AsyncLogging(std::bind(&LogFileAppender::fwrite, this, std::placeholders::_1)
@@ -58,23 +58,23 @@ void LogFileAppender::append(const char* msg) {
 void LogFileAppender::fwrite(const char* msg) {
     if (m_mutex) {
         std::lock_guard<std::mutex> lock(*m_mutex);
-        fwrite_unlocked(msg);
+        fwriteUnlocked(msg);
     } else {
-        fwrite_unlocked(msg);
+        fwriteUnlocked(msg);
     }
 }
 
-void LogFileAppender::fwrite_unlocked(const char* msg) {
+void LogFileAppender::fwriteUnlocked(const char* msg) {
     assert(m_file);
 
     // FIXME: 可以按照大小滚动，默认会按天滚动
     
     time_t now = ::time(nullptr);
-    roll_file_byday(now);
+    rollFileByDay(now);
     
     write(msg, strlen(msg));
 
-    roll_file_bysize();
+    rollFileBySize();
 
     check(now);
 }
@@ -92,7 +92,7 @@ void LogFileAppender::write(const char* msg, size_t len) {
         if (n != remain) {
             int err = ferror(m_file);
             if (err) {
-                fprintf(stderr, "LogFileAppender::write() failed %s\n", base::Util::get_err_info(err));
+                fprintf(stderr, "LogFileAppender::write() failed %s\n", base::Util::getErrInfo(err));
                 break;
             }
             if (n == 0) { throw std::runtime_error("write failed, FILE* is null\n"); }
@@ -106,13 +106,13 @@ void LogFileAppender::write(const char* msg, size_t len) {
 void LogFileAppender::fflush() {
     if (m_mutex) {
         std::lock_guard<std::mutex> lock(*m_mutex);
-        fflush_unlocked();
+        fflushUnlocked();
     } else {
-        fflush_unlocked();
+        fflushUnlocked();
     }
 }
 
-void LogFileAppender::fflush_unlocked(const time_t* cache_now) {
+void LogFileAppender::fflushUnlocked(const time_t* cache_now) {
     if (m_file) {
         time_t now;
         if (cache_now != nullptr) { now = *cache_now; } 
@@ -123,14 +123,14 @@ void LogFileAppender::fflush_unlocked(const time_t* cache_now) {
     }
 }
 
-void LogFileAppender::roll_file(const time_t* cache_now) {
+void LogFileAppender::rollFile(const time_t* cache_now) {
     time_t now;
     if (cache_now != nullptr) { now = *cache_now; } 
     else { now = ::time(nullptr); }
 
     if (now > m_last_roll) {    
-        auto filename = get_log_file_name(now);
-        mk_new_file(filename);
+        auto filename = getLogFileName(now);
+        mkNewFile(filename);
 
         auto start = now / kRollPerSeconds * kRollPerSeconds;  // 更新天的数据
         m_last_roll   = now;
@@ -139,17 +139,17 @@ void LogFileAppender::roll_file(const time_t* cache_now) {
     }
 }
 
-void LogFileAppender::roll_file_byday(time_t& now) {
+void LogFileAppender::rollFileByDay(time_t& now) {
     time_t cur_period = now / kRollPerSeconds * kRollPerSeconds;
     if (cur_period != m_last_period) {
-        roll_file(&now);
+        rollFile(&now);
     } 
 }
 
-void LogFileAppender::roll_file_bysize() {
+void LogFileAppender::rollFileBySize() {
     if (m_writen_bytes > m_roll_size) {
-        roll_file();
-        reset_written();
+        rollFile();
+        resetWritten();
     } 
 }
 
@@ -158,24 +158,24 @@ void LogFileAppender::check(time_t& now) {
     if (m_count >= m_check_everyn) {
         m_count         = 0;
         if (now - m_last_flush > m_flush_interval) {
-            fflush_unlocked(&now);
+            fflushUnlocked(&now);
         }
     }
 }
 
-const char* LogFileAppender::get_log_file_name(time_t& now) {
+const char* LogFileAppender::getLogFileName(time_t& now) {
     size_t base_sz = ::strlen(m_file_name);
     char* filename = t_filename;
     strcpy(t_filename, m_file_name);
 
     size_t tsz = strftime(t_filename + base_sz, sizeof(t_filename) - base_sz, ".%Y%m%d-%H%M%S", localtime(&now));
-    snprintf(t_filename + base_sz + tsz, sizeof(t_filename) - base_sz - tsz, ".%s.%d.log", base::ProcessInfo::get_host_name(),
-                              static_cast<int>( base::ProcessInfo::get_pid()));
+    snprintf(t_filename + base_sz + tsz, sizeof(t_filename) - base_sz - tsz, ".%s.%d.log", base::ProcessInfo::getHostName(),
+                              static_cast<int>( base::ProcessInfo::getPid()));
 
     return filename;
 }
 
-void LogFileAppender::mk_new_file(const char* file_name) {
+void LogFileAppender::mkNewFile(const char* file_name) {
     close();
     // FIXME: 需要判断是否存在文件夹
     m_file = fopen(file_name, "a");

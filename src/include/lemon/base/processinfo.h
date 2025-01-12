@@ -4,7 +4,7 @@
 namespace lemon {
 namespace base {
 
-const char* get_host_name();
+const char* getHostName();
 
 } // namespace base
 } // namespace lemon

@@ -16,16 +16,16 @@ AsyncLogging::AsyncLogging(const AsyncDoCallback& cb, int flush_interval)
     , m_flush_interval(flush_interval)
     , m_running(false)
     , m_latch(1) {
-    m_thread =  std::unique_ptr<std::thread>(new std::thread(&AsyncLogging::thread_worker, this));
+    m_thread =  std::unique_ptr<std::thread>(new std::thread(&AsyncLogging::threadWorker, this));
     m_latch.wait();
 }
 
 AsyncLogging::~AsyncLogging() {
     if (!m_running) return;
-    do_done();
+    doDone();
 }
 
-void AsyncLogging::do_done() {
+void AsyncLogging::doDone() {
     m_running = false;
     m_cond.notify_one();
 
@@ -54,7 +54,7 @@ void AsyncLogging::pushMsg(const inner_message& msg) {
     m_cond.notify_one();
 }
 
-void AsyncLogging::thread_worker() {
+void AsyncLogging::threadWorker() {
     try {
         m_running = true;
         // 备用缓存，减少内存分配

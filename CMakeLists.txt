@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.0)
 
 project(lemon)
 
+option(LEMON_BUILD_EXAMPLES "Build Lemon examples" ON)
+
 set(CXX_FLAGS
  -O2
  -g
@@ -33,5 +35,11 @@ link_directories(
     /usr/lib
 )
 
+if(LEMON_BUILD_EXAMPLES)
+  add_subdirectory(example)
+endif()
+
 add_subdirectory(src)
-add_subdirectory(example)
+
+
+

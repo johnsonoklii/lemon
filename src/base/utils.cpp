@@ -8,7 +8,7 @@ using namespace lemon::base;
 
 thread_local char           t_errnobuf[512];
 
-const char* Util::get_err_info(int error_code)
+const char* Util::getErrInfo(int error_code)
 {
 #if defined(_WIN32)
    ::strerror_s(t_errnobuf, sizeof(t_errnobuf), error_code);
@@ -19,7 +19,7 @@ const char* Util::get_err_info(int error_code)
    return t_errnobuf;
 }
 
-const char* ProcessInfo::get_host_name() {
+const char* ProcessInfo::getHostName() {
    thread_local char buf[256]{};
    if (buf[0] == -1) { return buf + 1; }
    if (::gethostname(buf + 1, sizeof(buf) - 1) == 0)
@@ -31,7 +31,7 @@ const char* ProcessInfo::get_host_name() {
 }
 
 
-pid_t ProcessInfo::get_pid() {
+pid_t ProcessInfo::getPid() {
 #if defined(_WIN32)
    thread_local auto pid = GetCurrentProcessId();
 #else

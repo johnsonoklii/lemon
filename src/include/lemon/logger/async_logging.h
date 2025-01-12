@@ -25,7 +25,7 @@ public:
 
     void pushMsg(const inner_message& msg);
 
-    void do_done();
+    void doDone();
 
     void doCallback(const char* msg);
 
@@ -39,7 +39,7 @@ public:
 
 private:
     using Buffer = LogBuffer<kLargeBuffer>;
-    void thread_worker();
+    void threadWorker();
     AsyncDoCallback m_do_callback;
     FlushCallback m_flush_callback;
 

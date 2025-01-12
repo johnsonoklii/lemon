@@ -40,7 +40,7 @@ public:
 
     bool valid() const { return m_data != nullptr; }
 
-    int avail() { return static_cast<int>(end_addr() - m_current); }
+    int avail() { return static_cast<int>(endAddr() - m_current); }
     
     void push(const inner_message& msg) {
         if (avail() > 0) {
@@ -55,7 +55,7 @@ public:
     void reset() { m_current = m_data; }
 
 private:
-    inner_message* end_addr() { return m_data + SIZE; }
+    inner_message* endAddr() { return m_data + SIZE; }
 
     inner_message* m_data;
     inner_message* m_current;
