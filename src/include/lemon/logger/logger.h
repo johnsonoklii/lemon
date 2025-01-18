@@ -1,15 +1,19 @@
 #ifndef LEMON_LOGGER_H
 #define LEMON_LOGGER_H
 
-#include <string>
-#include <unordered_map>
-
 #include "lemon/logger/log_level.h"
 #include "lemon/logger/log_appender.h"
 #include "lemon/logger/log_config.h"
 
+#include "lemon/base/utils.h"
+
+#include <string>
+#include <unordered_map>
+
 namespace lemon {
 namespace log {
+
+using namespace base;
 
 class Logger {
 public:
@@ -17,7 +21,7 @@ public:
     ~Logger();
 
     static Logger& getInstance();
-    void log(LogLevel level, const char* file_name, int line, const char* msg);
+    void log(LogLevel level, const char* file_name, int line, int thread_id,const char* msg);
 
     void setConfig(LogConfig::Ptr config);
 
@@ -40,11 +44,44 @@ private:
     std::unordered_map<std::string, LogAppenderInterface::Ptr> m_appenders;
 };
 
+#ifdef LEMON_DEBUG
+#define LOG_DEBUG(fmt, ...) \
+    do { \
+        char buf[1024]; \
+        snprintf(buf, sizeof(buf), fmt, ##__VA_ARGS__); \
+        Logger::getInstance().log(LogLevel::DEBUG, __FILE__, __LINE__, ProcessInfo::tid(), buf); \
+    } while (0)
+#else
+#define LOG_DEBUG(fmt, ...)
+#endif
+
 #define LOG_INFO(fmt, ...) \
     do { \
         char buf[1024]; \
         snprintf(buf, sizeof(buf), fmt, ##__VA_ARGS__); \
-        Logger::getInstance().log(LogLevel::INFO, __FILE__, __LINE__, buf); \
+        Logger::getInstance().log(LogLevel::INFO, __FILE__, __LINE__, ProcessInfo::tid(), buf); \
+    } while (0)
+
+#define LOG_WARN(fmt, ...) \
+    do { \
+        char buf[1024]; \
+        snprintf(buf, sizeof(buf), fmt, ##__VA_ARGS__); \
+        Logger::getInstance().log(LogLevel::WARN, __FILE__, __LINE__, ProcessInfo::tid(), buf); \
+    } while (0)
+
+#define LOG_ERROR(fmt, ...) \
+    do { \
+        char buf[1024]; \
+        snprintf(buf, sizeof(buf), fmt, ##__VA_ARGS__); \
+        Logger::getInstance().log(LogLevel::ERROR, __FILE__, __LINE__, ProcessInfo::tid(), buf); \
+    } while (0)
+
+#define LOG_FATAL(fmt, ...) \
+    do { \
+        char buf[1024]; \
+        snprintf(buf, sizeof(buf), fmt, ##__VA_ARGS__); \
+        Logger::getInstance().log(LogLevel::FATAL, __FILE__, __LINE__, ProcessInfo::tid(), buf); \
+        abort(); \
     } while (0)
 
 } // namespace log
