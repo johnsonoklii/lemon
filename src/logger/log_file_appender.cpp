@@ -170,7 +170,7 @@ const char* LogFileAppender::getLogFileName(time_t& now) {
 
     size_t tsz = strftime(t_filename + base_sz, sizeof(t_filename) - base_sz, ".%Y%m%d-%H%M%S", localtime(&now));
     snprintf(t_filename + base_sz + tsz, sizeof(t_filename) - base_sz - tsz, ".%s.%d.log", base::ProcessInfo::getHostName(),
-                              static_cast<int>( base::ProcessInfo::getPid()));
+                              static_cast<int>( base::ProcessInfo::tid()));
 
     return filename;
 }

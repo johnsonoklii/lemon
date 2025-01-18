@@ -35,19 +35,20 @@ Logger& Logger::getInstance() {
     return logger;
 }
 
-void Logger::log(LogLevel level, const char* file_name, int line, const char* msg) {
+void Logger::log(LogLevel level, const char* file_name, int line, int thread_id, const char* msg) {
     if (level < getLevel()) {
         return;
     }
 
     // FIXME: 由一个formatter类统一处理, 移到子线程中处理
     char buffer[strlen(msg)+200];
-    snprintf(buffer, sizeof(buffer), "[%s][%s][%s][%s:%d] %s"
+    snprintf(buffer, sizeof(buffer), "[%s][%s][%s][%s:%d][thread:%d] %s"
                                     , base::Timestamp::now().toString().data()
                                     , m_name
                                     , getLevelStr()
                                     , file_name
                                     , line
+                                    , thread_id
                                     , msg);
 
     for (auto& appender : m_appenders) {
