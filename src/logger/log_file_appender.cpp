@@ -32,6 +32,7 @@ LogFileAppender::LogFileAppender(const char* file_name, bool async, int roll_siz
     rollFile();
 
     if (m_async) {
+        // FIXME: share_from_this ? 防止析构时，异步线程还在写日志
         m_async_logging = new AsyncLogging(std::bind(&LogFileAppender::fwrite, this, std::placeholders::_1)
                                                 , m_flush_interval);
         m_async_logging->setFlushCallback(std::bind(&LogFileAppender::fflush, this));
@@ -66,8 +67,6 @@ void LogFileAppender::fwrite(const char* msg) {
 
 void LogFileAppender::fwriteUnlocked(const char* msg) {
     assert(m_file);
-
-    // FIXME: 可以按照大小滚动，默认会按天滚动
     
     time_t now = ::time(nullptr);
     rollFileByDay(now);
@@ -156,7 +155,7 @@ void LogFileAppender::rollFileBySize() {
 void LogFileAppender::check(time_t& now) {
     ++m_count;
     if (m_count >= m_check_everyn) {
-        m_count         = 0;
+        m_count = 0;
         if (now - m_last_flush > m_flush_interval) {
             fflushUnlocked(&now);
         }

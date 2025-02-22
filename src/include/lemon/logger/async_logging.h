@@ -30,7 +30,7 @@ public:
     void doCallback(const char* msg);
 
     void setDoCallback(const AsyncDoCallback& cb) {
-        m_do_callback = std::move(cb);
+        m_do_callback = cb;
     }
 
     void setFlushCallback(const FlushCallback& cb) {

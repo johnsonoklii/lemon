@@ -13,6 +13,7 @@ namespace base {
 
 class Timestamp {
 public:
+    Timestamp();
     static Timestamp now();
     std::string toString() const;
 

@@ -46,7 +46,7 @@ private:
     size_t      m_rool_size;        // 日志文件滚动大小，默认会按照天滚动
 };
 
-#define GLOB_CONFIG lemon::log::LogConfig::getInstance()
+#define GLOB_LOG_CONFIG lemon::log::LogConfig::getInstance()
 
 } // namespace log
 } // namespace lemon

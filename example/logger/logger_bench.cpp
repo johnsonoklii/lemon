@@ -11,9 +11,9 @@ using namespace std::chrono;
 int main() {
     int num = 1000000;
 
-    GLOB_CONFIG.setFile("./log/test");
-    GLOB_CONFIG.setConsole(false);
-    GLOB_CONFIG.setRollSize(1024 * 1024 * 64);
+    GLOB_LOG_CONFIG.setFile("./log/test");
+    GLOB_LOG_CONFIG.setConsole(false);
+    GLOB_LOG_CONFIG.setRollSize(1024 * 1024 * 64);
 
     auto start = high_resolution_clock::now();
 

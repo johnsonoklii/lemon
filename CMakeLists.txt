@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 project(lemon)
 
 option(LEMON_BUILD_EXAMPLES "Build Lemon examples" ON)
+option(ENABLE_LEMON_DEBUG "Enable LEMON_DEBUG macro" OFF)
 
 set(CXX_FLAGS
  -O2
@@ -13,6 +14,10 @@ set(CXX_FLAGS
  -std=c++11
  -pthread
 )
+
+if(ENABLE_LEMON_DEBUG)
+  add_definitions(-DLEMON_DEBUG)
+endif()
 
 # FLAGS
 string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
@@ -33,6 +38,7 @@ include_directories(
 link_directories(
     /usr/local/lib
     /usr/lib
+    lib
 )
 
 if(LEMON_BUILD_EXAMPLES)

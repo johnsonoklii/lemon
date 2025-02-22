@@ -73,7 +73,9 @@ void AsyncLogging::threadWorker() {
                     m_cond.wait_for(lock, std::chrono::seconds(m_flush_interval));
                 }
 
-                if (m_curBuffer.avail() > 0) {
+                // FIXME: < 0? 为什么m_curBuffer还有空间，要着急处理？
+                // 因为m_buffers此时可能为空, 需要先将m_curBuffer输出
+                if (m_buffers.empty() && m_curBuffer.avail() > 0) {
                     m_buffers.push_back(std::move(m_curBuffer));
                     m_curBuffer = std::move(newBuffer1);
                 }
@@ -88,6 +90,7 @@ void AsyncLogging::threadWorker() {
                 continue;
             }
 
+            // FIXME: buffert太大，一次性要移除这么多？
             if (buffers_write.size() > 100) {
                 char buf[256];
                 snprintf(buf, sizeof(buf),

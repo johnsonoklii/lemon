@@ -47,6 +47,7 @@ private:
 #ifdef LEMON_DEBUG
 #define LOG_DEBUG(fmt, ...) \
     do { \
+        GLOB_LOG_CONFIG.setLevel(LogLevel::DEBUG); \
         char buf[1024]; \
         snprintf(buf, sizeof(buf), fmt, ##__VA_ARGS__); \
         Logger::getInstance().log(LogLevel::DEBUG, __FILE__, __LINE__, ProcessInfo::tid(), buf); \

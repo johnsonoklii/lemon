@@ -3,6 +3,10 @@
 using namespace lemon;
 using namespace lemon::base;
 
+Timestamp::Timestamp() 
+: systemTimePoint_() {
+}
+
 Timestamp::Timestamp(const std::chrono::system_clock::time_point& timePoint) 
 : systemTimePoint_(timePoint) {
 }

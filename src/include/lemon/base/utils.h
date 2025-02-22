@@ -6,6 +6,8 @@
 namespace lemon {
 namespace base {
 
+extern thread_local int t_cached_tid;
+
 struct Util
 {
     static const char* getErrInfo(int error_code);
@@ -13,7 +15,7 @@ struct Util
 
 struct ProcessInfo {
     static const char* getHostName();
-    static pid_t getPid();
+    static pid_t tid();
 };
 
 

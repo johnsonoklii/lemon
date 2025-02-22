@@ -5,15 +5,12 @@
 using namespace lemon;
 using namespace lemon::log;
 
-ConsoleAppender::ConsoleAppender()
-{
+ConsoleAppender::ConsoleAppender() {
 }
 
-ConsoleAppender::~ConsoleAppender()
-{
+ConsoleAppender::~ConsoleAppender() {
 }
 
-void ConsoleAppender::append(const char* msg)
-{
+void ConsoleAppender::append(const char* msg) {
     printf("%s", msg);
 }

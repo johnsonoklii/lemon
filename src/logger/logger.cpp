@@ -62,7 +62,7 @@ void Logger::setConfig(LogConfig::Ptr config) {
 }
 
 const char* Logger::getLevelStr() const{
-    LogLevel level = m_config ? m_config->getLevel() : GLOB_CONFIG.getLevel();
+    LogLevel level = m_config ? m_config->getLevel() : GLOB_LOG_CONFIG.getLevel();
     switch (level) {
         case DEBUG:
             return "DEBUG";
@@ -83,7 +83,7 @@ LogLevel Logger::getLevel() const {
     if (m_config) {
         return m_config->getLevel();
     } else {
-        return GLOB_CONFIG.getLevel();
+        return GLOB_LOG_CONFIG.getLevel();
     }
 }
 
@@ -91,7 +91,7 @@ bool Logger::isConsole() const {
     if (m_config) {
         return m_config->isConsole();
     } else {
-        return GLOB_CONFIG.isConsole();
+        return GLOB_LOG_CONFIG.isConsole();
     }
 }
 
@@ -99,7 +99,7 @@ bool Logger::isAsync() const {
     if (m_config) {
         return m_config->isAsync();
     } else {
-        return GLOB_CONFIG.isAsync();
+        return GLOB_LOG_CONFIG.isAsync();
     }
 }
 
@@ -107,7 +107,7 @@ const char* Logger::getFile() const {
     if (m_config) {
         return m_config->getFile();
     } else {
-        return GLOB_CONFIG.getFile();
+        return GLOB_LOG_CONFIG.getFile();
     }
 }
 
@@ -115,7 +115,7 @@ int Logger::getFlushInterval() const {
     if (m_config) {
         return m_config->getFlushInterval();
     } else {
-        return GLOB_CONFIG.getFlushInterval();
+        return GLOB_LOG_CONFIG.getFlushInterval();
     }
 }
 
@@ -123,6 +123,6 @@ int Logger::getRollSize() const {
     if (m_config) {
         return m_config->getRollSize();
     } else {
-        return GLOB_CONFIG.getRollSize();
+        return GLOB_LOG_CONFIG.getRollSize();
     }
 }
