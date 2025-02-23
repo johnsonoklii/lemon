@@ -29,12 +29,15 @@ public:
     void tie(const std::shared_ptr<void>&);
     int fd() const { return m_fd; }
     int events() const { return m_events; }
+
+    void setTriMode(int triMode) { m_triMode = triMode; }
+
     void setRevents(int revt) { m_revents = revt; }
     bool isNoneEvent() const { return m_events == kNoneEvent; }
     
-    void enableReading() { m_events |= kReadEvent; update(); }
+    void enableReading() { m_events |= (kReadEvent | m_triMode); update(); }
     void disableReading() { m_events &= ~kReadEvent; update(); }
-    void enableWriting() { m_events |= kWriteEvent; update(); }
+    void enableWriting() { m_events |= (kWriteEvent | m_triMode); update(); }
     void disableWriting() { m_events &= ~kWriteEvent; update(); }
     void disableAll() { m_events = kNoneEvent; update(); }
     bool isWriting() const { return m_events & kWriteEvent; }
@@ -80,6 +83,7 @@ private:
     int m_revents;  // 触发的事件
     int m_index;
     bool m_logHup;
+    int m_triMode;
 
     std::weak_ptr<void> m_tie;
     bool m_tied;

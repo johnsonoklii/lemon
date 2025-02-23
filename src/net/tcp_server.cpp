@@ -10,10 +10,12 @@ using namespace lemon::log;
 TcpServer::TcpServer(EventLoop* loop,
                     const InetAddress& listenAddr,
                     const std::string& name,
+                    TRIMODE triMode,
                     Option option)
 : m_loop(loop)
  , m_ip_port(listenAddr.getIpPort())
  , m_name(name)
+ , m_triMode(triMode)
  , m_acceptor(new Acceptor(loop, listenAddr, option == kReusePort))
  , m_thread_pool(new EventLoopThreadPool(loop, name))
  , m_next_connid(1)  {
@@ -61,7 +63,7 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
              m_name.c_str(), conn_name.c_str(), peerAddr.getIpPort().c_str());
 
     InetAddress localAddr(getLocalAddr(sockfd));
-    TcpConnectionPtr conn(new TcpConnection(sub_loop, conn_name, sockfd, localAddr, peerAddr));
+    TcpConnectionPtr conn(new TcpConnection(sub_loop, conn_name, sockfd, m_triMode, localAddr, peerAddr));
 
     m_connections[conn_name] = conn;
     conn->setConnectionCallback(m_connctionCallback);

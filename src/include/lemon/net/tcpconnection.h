@@ -23,6 +23,7 @@ public:
     TcpConnection(EventLoop* loop
                 , const std::string& name
                 , int sockfd
+                , int triMode
                 , const InetAddress& localAddr
                 , const InetAddress& peerAddr);
     ~TcpConnection();
@@ -63,10 +64,17 @@ public:
 private:
     enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
     
+    // FIXME: delete
     void handleRead(Timestamp receiveTime);
     void handleWrite();
+    
     void handleClose();
     void handleError();
+
+    void handleReadET(Timestamp receiveTime);
+    void handleReadLT(Timestamp receiveTime);
+    void handleWriteET();
+    void handleWriteLT();
 
     void sendInLoop(const std::string& message);
 
@@ -79,6 +87,7 @@ private:
     const std::string m_name;
     StateE m_state;
     bool m_reading;
+    int m_triMode;     // 0: LT, 1: ET
 
     std::unique_ptr<Socket> m_socket;
     std::unique_ptr<Channel> m_channel;

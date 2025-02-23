@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include <netinet/tcp.h>
+#include <fcntl.h>
 
 using namespace lemon;
 using namespace lemon::net;
@@ -129,4 +130,15 @@ void Socket::setKeepAlive(bool on) {
     int optval = on ? 1 : 0;
     ::setsockopt(m_fd, SOL_SOCKET, SO_KEEPALIVE,
                 &optval, static_cast<socklen_t>(sizeof optval));
+}
+
+void Socket::setNonBlock() {
+    int flags = fcntl(m_fd, F_GETFL, 0);
+    if (flags == -1) {
+        LOG_ERROR("Socket::setNonBlock(): Failed to get flags for fd\n");
+        return;
+    }
+    if (fcntl(m_fd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        LOG_ERROR("Socket::setNonBlock(): Failed to set non-blocking mode for fd\n");
+    }
 }

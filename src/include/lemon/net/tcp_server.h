@@ -27,6 +27,8 @@ class EventLoopThreadPool;
 class Acceptor;
 class InetAddress;
 
+
+
 class TcpServer: public noncopyable {
 public:
     using ThreadInitCallback = std::function<void(EventLoop*)>;
@@ -35,9 +37,15 @@ public:
         kReusePort,
     };
 
+    enum TRIMODE{
+        LT = 0,
+        ET
+    };
+
     TcpServer(EventLoop* loop,
             const InetAddress& listenAddr,
             const std::string& name,
+            TRIMODE triMode = LT,
             Option option = kNoReusePort);
     
     ~TcpServer();
@@ -65,6 +73,7 @@ private:
     EventLoop* m_loop;
     const std::string m_ip_port;
     const std::string m_name;
+    TRIMODE m_triMode;
     std::unique_ptr<Acceptor> m_acceptor;
     std::shared_ptr<EventLoopThreadPool> m_thread_pool;
     

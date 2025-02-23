@@ -34,6 +34,8 @@ public:
 
     void setKeepAlive(bool on);
 
+    void setNonBlock();
+
     static int createSocket(sa_family_t family);
 
 private:
