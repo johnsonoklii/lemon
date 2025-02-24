@@ -1,12 +1,10 @@
 #include "lemon/base/thread.h"
 #include "lemon/base/utils.h"
-#include "lemon/logger/logger.h"
 
 #include <cassert>
 
 using namespace lemon;
 using namespace lemon::base;
-using namespace lemon::log;
 
 std::atomic_int Thread::m_numCreated;
 

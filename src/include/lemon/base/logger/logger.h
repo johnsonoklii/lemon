@@ -1,9 +1,9 @@
 #ifndef LEMON_LOGGER_H
 #define LEMON_LOGGER_H
 
-#include "lemon/logger/log_level.h"
-#include "lemon/logger/log_appender.h"
-#include "lemon/logger/log_config.h"
+#include "lemon/base/logger/log_level.h"
+#include "lemon/base/logger/log_appender.h"
+#include "lemon/base/logger/log_config.h"
 
 #include "lemon/base/utils.h"
 
