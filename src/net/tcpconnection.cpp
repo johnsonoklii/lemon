@@ -80,7 +80,9 @@ void TcpConnection::connectEstablished() {
     m_loop->assertInLoopThread();
     assert(m_state == kConnecting);
     setState(kConnected);
-    m_connectionCallback(shared_from_this());
+    if (m_connectionCallback) {
+        m_connectionCallback(shared_from_this());
+    }
     m_channel->tie(shared_from_this());
     m_channel->enableReading();
 }
@@ -90,7 +92,9 @@ void TcpConnection::connectDestroyed() {
     if (m_state == kConnected) {
         setState(kDisconnected);
         m_channel->disableAll();
-        m_connectionCallback(shared_from_this());
+        if (m_connectionCallback) {
+            m_connectionCallback(shared_from_this());
+        }
     }
     m_channel->remove();
 } 
@@ -328,8 +332,13 @@ void TcpConnection::handleClose() {
     m_channel->disableAll(); // FIXME: LT模式下，这里必须清除所有事件，否则对端关闭时，会一直触发EPOLLIN事件
     
     TcpConnectionPtr guardThis(shared_from_this());
-    m_connectionCallback(guardThis);
-    m_closeCallback(guardThis);
+    if (m_connectionCallback) {
+        m_connectionCallback(guardThis);
+    }
+
+    if (m_closeCallback) {
+        m_closeCallback(guardThis);
+    }
 }
 
 void TcpConnection::handleError() {

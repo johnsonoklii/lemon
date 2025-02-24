@@ -59,7 +59,7 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
     ++m_next_connid;
     std::string conn_name = m_name + buf;
 
-    LOG_INFO("TcpServer::newConnection [%s] - new connection [%s] from %s\n",
+    LOG_DEBUG("TcpServer::newConnection [%s] - new connection [%s] from %s\n",
              m_name.c_str(), conn_name.c_str(), peerAddr.getIpPort().c_str());
 
     InetAddress localAddr(getLocalAddr(sockfd));
@@ -86,7 +86,7 @@ void TcpServer::removeConnection(const TcpConnectionPtr& conn) {
 
 void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& conn) {
     m_loop->assertInLoopThread();
-    LOG_INFO("TcpServer::removeConnectionInLoop [%s] - connection [%s] from %s\n",
+    LOG_DEBUG("TcpServer::removeConnectionInLoop [%s] - connection [%s] from %s\n",
              m_name.c_str(), conn->name().c_str(), conn->peerAddress().getIpPort().c_str());
     
     size_t n = m_connections.erase(conn->name());
