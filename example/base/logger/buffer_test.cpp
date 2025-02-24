@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "lemon/logger/log_buffer.h"
+#include "lemon/base/logger/log_buffer.h"
 
 using namespace lemon;
 using namespace lemon::log;

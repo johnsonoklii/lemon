@@ -9,7 +9,7 @@
 #include <vector>
 #include <functional>
 
-#include "lemon/logger/log_buffer.h"
+#include "lemon/base/logger/log_buffer.h"
 #include "lemon/base/count_down_latch.h"
 
 namespace lemon {

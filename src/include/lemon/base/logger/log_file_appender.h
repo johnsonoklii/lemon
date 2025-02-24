@@ -4,8 +4,8 @@
 #include <memory>
 #include <mutex>
 
-#include "lemon/logger/log_appender.h"
-#include "lemon/logger/async_logging.h"
+#include "lemon/base/logger/log_appender.h"
+#include "lemon/base/logger/async_logging.h"
 
 namespace lemon {
 namespace log {
