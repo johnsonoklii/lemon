@@ -4,6 +4,7 @@
 #include "lemon/base/nocopyable.h"
 #include "lemon/base/timestamp.h"
 #include "lemon/base/utils.h"
+#include "lemon/base/co/fiber.h"
 
 #include <unistd.h>
 
@@ -16,6 +17,7 @@ namespace lemon {
 namespace net {
 
 using namespace base;
+using namespace co;
 
 class Channel;
 class Poller;
@@ -27,15 +29,18 @@ public:
     EventLoop();
     ~EventLoop();
 
-    void loop();
+    void loop();  // 协程实现
+    void loop2(); // muduo库中的实现
 
     void stop();
 
     Timestamp pollReturnTime() const { return m_poll_return_time; }
     
     void runInLoop(const Functor& cb);
-    
     void queueInLoop(const Functor& cb);
+
+    void queueInLoopFiber(const Functor& cb);
+    void addTask(const Fiber::FunCallback& cb);
 
     size_t queueSize();
 
@@ -67,6 +72,8 @@ private:
     void handleRead();
     void doPendingFunctors();
 
+    void doFiberTasks();
+
     bool m_looping; // FIXME: change to Atomic
 
     bool m_event_handling;
@@ -86,6 +93,8 @@ private:
 
     std::mutex m_mutex;
     std::vector<Functor> m_pending_functors;
+
+    std::vector<Fiber::Ptr> m_fiber_tasks;
 };
 
 } // namespace net

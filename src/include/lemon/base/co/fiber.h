@@ -13,7 +13,7 @@ namespace lemon {
 namespace co {
 using namespace lemon::base;
 
-constexpr int STACK_SIZE = 4 * 1024; // 128KB
+constexpr int STACK_SIZE = 128 * 1024; // 128KB
 
 // only run in thread who created it
 class Fiber: noncopyable, public std::enable_shared_from_this<Fiber> {

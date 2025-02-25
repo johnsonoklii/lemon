@@ -34,6 +34,7 @@ EventLoop::EventLoop()
  , m_current_active_channel(nullptr)
  , m_mutex()
  , m_pending_functors(){
+    co::init();
     LOG_DEBUG("EventLoop created %p in thread %d\n", this, m_thread_id);
     if (t_loop_in_this_thread) {
         LOG_FATAL("Another EventLoop %p exists in this thread %d\n", t_loop_in_this_thread, m_thread_id);
@@ -53,7 +54,7 @@ EventLoop::~EventLoop() {
     t_loop_in_this_thread = nullptr;
 }
 
-void EventLoop::loop() {
+void EventLoop::loop2() {
     assert(!m_looping);
     assertInLoopThread();
     m_looping = true;
@@ -75,6 +76,33 @@ void EventLoop::loop() {
         m_current_active_channel = nullptr;
         m_event_handling = false;
         doPendingFunctors();
+    }
+}
+
+void EventLoop::loop() {
+    assert(!m_looping);
+    assertInLoopThread();
+    m_looping = true;
+    
+    LOG_DEBUG("EventLoop %p start looping\n", this);
+
+    // epoll_wait()
+    while (m_looping) {
+        m_active_channels.clear();
+        m_poll_return_time = m_poller->poll(kPollTimeMs, &m_active_channels);
+        ++m_iteration;
+
+        m_event_handling = true;
+        for (Channel* channel : m_active_channels) {
+            addTask([this, channel](){
+                m_current_active_channel = channel;
+                channel->handleEvent(m_poll_return_time);
+                m_current_active_channel = nullptr;
+            });
+        }
+
+        m_event_handling = false;
+        doFiberTasks();
     }
 }
 
@@ -134,7 +162,8 @@ void EventLoop::runInLoop(const Functor& cb) {
 void EventLoop::queueInLoop(const Functor& cb) {
     {
         std::lock_guard<std::mutex> lock(m_mutex);
-        m_pending_functors.push_back(cb);
+        // m_pending_functors.push_back(cb);
+        m_fiber_tasks.push_back(std::make_shared<Fiber>(cb));
     }
 
     if (!isInLoopThread() || m_calling_pending_funcs) {
@@ -171,4 +200,24 @@ void EventLoop::doPendingFunctors() {
     }
 
     m_calling_pending_funcs = false;
+}
+
+void EventLoop::doFiberTasks() {
+    std::vector<Fiber::Ptr> functors;
+    m_calling_pending_funcs = true;
+
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        functors.swap(m_fiber_tasks);
+    }
+
+    for (const Fiber::Ptr& functor : functors) {
+        functor->resume();
+    }
+
+    m_calling_pending_funcs = false;
+}
+
+void EventLoop::addTask(const Fiber::FunCallback& cb) {
+    m_fiber_tasks.push_back(std::make_shared<Fiber>(cb));
 }
