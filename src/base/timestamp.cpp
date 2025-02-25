@@ -4,11 +4,11 @@ using namespace lemon;
 using namespace lemon::base;
 
 Timestamp::Timestamp() 
-: systemTimePoint_() {
+: m_systemTimePoint() {
 }
 
 Timestamp::Timestamp(const std::chrono::system_clock::time_point& timePoint) 
-: systemTimePoint_(timePoint) {
+: m_systemTimePoint(timePoint) {
 }
 
 Timestamp Timestamp::now() {
@@ -16,7 +16,7 @@ Timestamp Timestamp::now() {
 }
 
 std::string Timestamp::toString() const {
-    std::time_t time = std::chrono::system_clock::to_time_t(systemTimePoint_);
+    std::time_t time = std::chrono::system_clock::to_time_t(m_systemTimePoint);
     std::tm bt = *std::localtime(&time);
 
     char buffer[32] = {0};

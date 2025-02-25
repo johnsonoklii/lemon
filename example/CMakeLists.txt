@@ -10,6 +10,14 @@ foreach(LOGGER_SRC_FILE ${LOGGER_SRCS})
     set_target_properties(${LOGGER_BASE_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BIN_OUTPUT_DIR}/base/logger)
 endforeach()
 
+# co
+file(GLOB CO_SRCS base/co/*.cpp)
+foreach(CO_SRC_FILE ${CO_SRCS})
+    get_filename_component(CO_BASE_NAME ${CO_SRC_FILE} NAME_WE)  
+    add_executable(${CO_BASE_NAME} ${CO_SRC_FILE})
+    set_target_properties(${CO_BASE_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BIN_OUTPUT_DIR}/base/co)
+endforeach()
+
 # base
 file(GLOB BASE_SRCS base/*.cpp)
 foreach(BASE_SRC_FILE ${BASE_SRCS})

@@ -20,7 +20,7 @@ public:
 private:
     Timestamp(const std::chrono::system_clock::time_point& timePoint);
 
-    std::chrono::system_clock::time_point systemTimePoint_;
+    std::chrono::system_clock::time_point m_systemTimePoint;
 };
 
 } // namespace base
