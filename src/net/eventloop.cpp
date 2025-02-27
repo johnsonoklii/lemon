@@ -1,7 +1,9 @@
 #include "lemon/net/eventloop.h"
 #include "lemon/net/channel.h"
-#include "lemon/base/logger/logger.h"
 #include "lemon/net/poller.h"
+#include "lemon/net/timer_set.h"
+#include "lemon/base/logger/logger.h"
+
 
 #include <algorithm>
 #include <sys/eventfd.h>
@@ -29,6 +31,7 @@ EventLoop::EventLoop()
  , m_iteration(0)
  , m_thread_id(ProcessInfo::tid())
  , m_poller(Poller::newDefaultPoller(this))
+ , m_timeSet(new TimerSet(this))
  , m_wakeup_fd(createEventFd())
  , m_wakeup_channel(new Channel(this, m_wakeup_fd))
  , m_current_active_channel(nullptr)
@@ -51,6 +54,7 @@ EventLoop::~EventLoop() {
     m_wakeup_channel->remove();
     ::close(m_wakeup_fd);
     t_loop_in_this_thread = nullptr;
+    delete m_current_active_channel;
 }
 
 void EventLoop::loop() {
@@ -171,4 +175,23 @@ void EventLoop::doPendingFunctors() {
     }
 
     m_calling_pending_funcs = false;
+}
+
+// Timer
+TimerId EventLoop::runAt(Timestamp when, TimerCallback cb) {
+    return m_timeSet->addTimer(std::move(cb), when, 0.0);
+}
+
+TimerId EventLoop::runAfter(double delay, TimerCallback cb) {
+    Timestamp when = Timestamp::addTime(Timestamp::now(), delay);
+    return runAt(when, std::move(cb));
+}
+
+TimerId EventLoop::runEvery(double interval, TimerCallback cb) {
+    Timestamp when = Timestamp::addTime(Timestamp::now(), interval);
+    return m_timeSet->addTimer(std::move(cb), when, interval);
+}
+
+void EventLoop::cancel(TimerId timerId) {
+    m_timeSet->cancel(timerId);
 }
