@@ -14,6 +14,8 @@ using namespace lemon::base;
 class Buffer;
 class TcpConnection;
 
+using TimerCallback = std::function<void()>;
+
 using TcpConnectionPtr = std::shared_ptr<TcpConnection>;
 
 using ConnectionCallback = std::function<void(const TcpConnectionPtr&)>;

@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "lemon/logger/log_level.h"
+#include "lemon/base/logger/log_level.h"
 
 namespace lemon {
 namespace log {

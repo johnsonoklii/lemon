@@ -1,7 +1,7 @@
 #ifndef LEMON_CONSOLE_APPENDER_H_
 #define LEMON_CONSOLE_APPENDER_H_
 
-#include "lemon/logger/log_appender.h"
+#include "lemon/base/logger/log_appender.h"
 
 namespace lemon {
 namespace log {
@@ -13,7 +13,7 @@ public:
     virtual void append(const char* msg) override;
 };
 
-} // log
+} // namespace log
 } // namespace lemon
 
 #endif
