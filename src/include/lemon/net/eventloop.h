@@ -4,6 +4,8 @@
 #include "lemon/base/nocopyable.h"
 #include "lemon/base/timestamp.h"
 #include "lemon/base/utils.h"
+#include "lemon/net/timerid.h"
+#include "lemon/net/callbacks.h"
 
 #include <unistd.h>
 
@@ -19,6 +21,7 @@ using namespace base;
 
 class Channel;
 class Poller;
+class TimerSet;
 
 class EventLoop: public noncopyable {
 public:
@@ -58,6 +61,12 @@ public:
         return m_event_handling;
     }
 
+    // timers
+    TimerId runAt(Timestamp time, TimerCallback cb);
+    TimerId runAfter(double delay, TimerCallback cb);
+    TimerId runEvery(double interval, TimerCallback cb);
+    void cancel(TimerId timerId);
+
     static EventLoop* getEventLoopOfCurrentThread();
 
 private:
@@ -77,6 +86,7 @@ private:
     Timestamp m_poll_return_time;
 
     std::unique_ptr<Poller> m_poller;
+    std::unique_ptr<TimerSet> m_timeSet;
     
     int m_wakeup_fd;    // 其他线程使用loop添加了待执行的函数，通过wakeup_fd唤醒loop的poller
     std::unique_ptr<Channel> m_wakeup_channel;
