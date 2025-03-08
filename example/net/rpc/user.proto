@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package user;
+
+option cc_generic_services = true;
+
+message LoginRequest {
+    bytes username = 1;
+    bytes password = 2;
+}
+
+message LoginResponse {
+    ResponseCode rscode = 1;
+    bytes token = 2;
+}
+
+message ResponseCode {
+    int32 code = 1;
+    string message = 2;
+}
+
+
+service UserServiceRpc {
+    rpc Login(LoginRequest) returns (LoginResponse);
+}

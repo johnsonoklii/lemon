@@ -25,3 +25,14 @@ foreach(NET_SRC_FILE ${NET_SRCS})
     add_executable(${NET_BASE_NAME} ${NET_SRC_FILE})
     set_target_properties(${NET_BASE_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BIN_OUTPUT_DIR}/net)
 endforeach()
+
+# rpc
+add_subdirectory(net/rpc/callee)
+add_subdirectory(net/rpc/caller)
+
+# file(GLOB_RECURSE RPC_SRCS net/rpc/*.cpp)
+# foreach(RPC_SRC_FILE ${RPC_SRCS})
+#     get_filename_component(RPC_BASE_NAME ${RPC_SRC_FILE} NAME_WE)  
+#     add_executable(${RPC_BASE_NAME} ${RPC_SRC_FILE})
+#     set_target_properties(${RPC_BASE_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BIN_OUTPUT_DIR}/net/rpc)
+# endforeach()
