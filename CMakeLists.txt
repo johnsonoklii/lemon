@@ -31,6 +31,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 include_directories(
   ${PROJECT_SOURCE_DIR}/src/include
   /usr/local/include
+  /usr/local/include/zookeeper
   /usr/include
 )
 

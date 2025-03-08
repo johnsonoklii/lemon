@@ -10,12 +10,25 @@
 
 #include <string>
 #include <memory>
+#include <unordered_map>
 
 namespace lemon {
 namespace net {
 
 class EventLoop;
 class Socket;
+
+struct Context {
+    std::shared_ptr<void> data;      
+    const std::type_info& type;      
+
+    explicit Context() : type(typeid(void)) {} 
+
+    template <typename T>
+    explicit Context(std::shared_ptr<T> ptr)
+        : data(std::static_pointer_cast<void>(ptr)), 
+          type(typeid(T)) {}
+};
 
 class TcpConnection: noncopyable
                     , public std::enable_shared_from_this<TcpConnection> {
@@ -42,6 +55,20 @@ public:
 
     void startRead();
     void stopRead();
+    
+    template<typename T>
+    void setContext(const std::string& key, std::shared_ptr<T> context) { 
+        m_contextMap.emplace(key, Context(context));
+    }
+
+    template<typename T>
+    std::shared_ptr<T> getContext(const std::string& key) {
+        auto it = m_contextMap.find(key);
+        if (it != m_contextMap.end() && it->second.type == typeid(T)) {
+            return std::static_pointer_cast<T>(it->second.data);
+        }
+        return nullptr;
+    }
 
     bool isReading() const { return m_reading; }
 
@@ -60,6 +87,8 @@ public:
     void connectEstablished();   // should be called only once
     // called when TcpServer has removed me from its map
     void connectDestroyed();  // should be called only once
+
+
 
 private:
     enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
@@ -104,6 +133,8 @@ private:
     size_t m_highWaterMark;
     Buffer m_inputBuffer;
     Buffer m_outputBuffer;
+
+    std::unordered_map<std::string, Context> m_contextMap;
 };
 
 } // namespace net
