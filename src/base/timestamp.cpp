@@ -19,9 +19,18 @@ Timestamp Timestamp::now() {
     return Timestamp(std::chrono::system_clock::now());
 }
 
-Timestamp Timestamp::addTime(Timestamp timestamp, double second) {
+Timestamp Timestamp::addTime_Second(Timestamp timestamp, double second) {
     int64_t microseconds = second * kMicroSecondsPerSecond;
     return Timestamp(timestamp.m_systemTimePoint + std::chrono::microseconds(static_cast<long long>(microseconds)));
+}
+
+Timestamp Timestamp::addTime_MilliSecond(Timestamp timestamp, double millisecond) {
+    int64_t microseconds = millisecond * 1000;
+    return Timestamp(timestamp.m_systemTimePoint + std::chrono::microseconds(static_cast<long long>(microseconds)));
+}
+
+Timestamp Timestamp::addTime_MicroSecond(Timestamp timestamp, double microsecond) {
+    return Timestamp(timestamp.m_systemTimePoint + std::chrono::microseconds(static_cast<long long>(microsecond)));
 }
 
 Timestamp Timestamp::invalid() {
@@ -39,4 +48,11 @@ std::string Timestamp::toString() const {
 
 int64_t Timestamp::microSecondsSinceEpoch() const {
     return std::chrono::duration_cast<std::chrono::microseconds>(m_systemTimePoint.time_since_epoch()).count();
+}
+
+int64_t Timestamp::milliSecondsSinceEpoch() const {
+    return std::chrono::duration_cast<std::chrono::milliseconds>(m_systemTimePoint.time_since_epoch()).count();
+}
+int64_t Timestamp::secondsSinceEpoch() const {
+    return std::chrono::duration_cast<std::chrono::seconds>(m_systemTimePoint.time_since_epoch()).count();
 }

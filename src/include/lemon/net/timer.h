@@ -27,7 +27,7 @@ public:
 private:
     TimerCallback m_cb;
     Timestamp m_expiration;
-    double m_interval;
+    double m_interval;  // 毫秒
     bool m_repeat;
     const int64_t m_sequence;
 };
