@@ -183,12 +183,12 @@ TimerId EventLoop::runAt(Timestamp when, TimerCallback cb) {
 }
 
 TimerId EventLoop::runAfter(double delay, TimerCallback cb) {
-    Timestamp when = Timestamp::addTime(Timestamp::now(), delay);
+    Timestamp when = Timestamp::addTime_MilliSecond(Timestamp::now(), delay);
     return runAt(when, std::move(cb));
 }
 
 TimerId EventLoop::runEvery(double interval, TimerCallback cb) {
-    Timestamp when = Timestamp::addTime(Timestamp::now(), interval);
+    Timestamp when = Timestamp::addTime_MilliSecond(Timestamp::now(), interval);
     return m_timeSet->addTimer(std::move(cb), when, interval);
 }
 

@@ -24,7 +24,7 @@ int main() {
   print();
 
   EventLoop loop;
-  loop.runAfter(11, std::bind(&EventLoop::stop, &loop));
+  loop.runAfter(11000, std::bind(&EventLoop::stop, &loop));
 
   {
     printf("Single thread %p:\n", &loop);
@@ -42,7 +42,7 @@ int main() {
     model.setThreadNum(1);
     model.start(init);
     EventLoop* nextLoop = model.getNextLoop();
-    nextLoop->runAfter(2, std::bind(print, nextLoop));
+    nextLoop->runAfter(2000, std::bind(print, nextLoop));
     assert(nextLoop != &loop);
     assert(nextLoop == model.getNextLoop());
     assert(nextLoop == model.getNextLoop());

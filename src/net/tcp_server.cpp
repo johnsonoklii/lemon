@@ -11,6 +11,7 @@ TcpServer::TcpServer(EventLoop* loop,
                     const InetAddress& listenAddr,
                     const std::string& name,
                     TRIMODE triMode,
+                    int64_t conn_timeout,
                     Option option)
 : m_loop(loop)
  , m_ip_port(listenAddr.getIpPort())
@@ -18,10 +19,15 @@ TcpServer::TcpServer(EventLoop* loop,
  , m_triMode(triMode)
  , m_acceptor(new Acceptor(loop, listenAddr, option == kReusePort))
  , m_thread_pool(new EventLoopThreadPool(loop, name))
- , m_next_connid(1)  {
+ , m_next_connid(1)
+ , m_conn_timeout(conn_timeout)  {
     m_acceptor->setNewConnectionCallback(
         std::bind(&TcpServer::newConnection, this, std::placeholders::_1, std::placeholders::_2)
     );
+
+    if (m_conn_timeout > 0) {
+        m_loop->runEvery(m_conn_timeout, std::bind(&TcpServer::timeoutConnection2, this));
+    }
 }
 
 TcpServer::~TcpServer() {
@@ -72,6 +78,15 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
     conn->setCloseCallback(
         std::bind(&TcpServer::removeConnection, this, std::placeholders::_1)
     );
+
+    if (m_conn_timeout > 0) {
+        conn->setTimeout(m_conn_timeout);
+    }
+
+    std::pair<Timestamp, TcpConnectionPtr> pair = std::make_pair(conn->lastReadTime(), conn);
+    m_activeConns.insert(pair);
+
+    assert(m_connections.size() == m_activeConns.size());
     
     sub_loop->runInLoop(
         std::bind(&TcpConnection::connectEstablished, conn)
@@ -91,8 +106,52 @@ void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& conn) {
     
     size_t n = m_connections.erase(conn->name());
     assert(n == 1);
+    
+    std::pair<Timestamp, TcpConnectionPtr> pair = std::make_pair(conn->lastReadTime(), conn);
+    m_activeConns.erase(pair);
+
+    assert(m_connections.size() == m_activeConns.size());
+
     EventLoop* io_loop = conn->getLoop();
     io_loop->queueInLoop(
         std::bind(&TcpConnection::connectDestroyed, conn)
     );
+}
+
+void TcpServer::setConnTimeout(int64_t conn_timeout) {
+    m_conn_timeout = conn_timeout;
+    m_loop->runEvery(m_conn_timeout, std::bind(&TcpServer::timeoutConnection2, this));
+}
+
+void TcpServer::timeoutConnection() {
+    for (auto it : m_connections) {
+        Timestamp last_read_time =  it.second->lastReadTime();
+
+        int64_t pad_sec = Timestamp::now().milliSecondsSinceEpoch() - last_read_time.milliSecondsSinceEpoch();
+        int64_t timeout = it.second->timeout();
+
+        LOG_INFO("pad_sec = %ld, timeout = %ld\n", pad_sec, timeout);
+        if (timeout < 0) continue;
+
+        if (pad_sec > timeout) {
+            LOG_WARN("TcpServer::timeoutConnection [%s] - connection [%s] from %s\n",
+                     m_name.c_str(), it.second->name().c_str(), it.second->peerAddress().getIpPort().c_str());
+            it.second->forceClose();
+       }
+    }
+}
+
+void TcpServer::timeoutConnection2() {
+    Timestamp now = Timestamp::now();
+    while (!m_activeConns.empty()) {
+        auto it = m_activeConns.begin();
+        int64_t pad = now.milliSecondsSinceEpoch() - it->second->lastReadTime().milliSecondsSinceEpoch();
+
+        if (pad < it->second->timeout()) break;
+        
+        LOG_WARN("TcpServer::timeoutConnection2 [%s] - connection [%s] from %s\n",
+                 m_name.c_str(), it->second->name().c_str(), it->second->peerAddress().getIpPort().c_str());
+        it->second->forceClose(); 
+        m_activeConns.erase(it); // FIXME: 这里不移除m_activeConns，会死循环，因为forceClose需要等到下一次才被激活
+    }
 }
