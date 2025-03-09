@@ -11,7 +11,7 @@ using namespace std::chrono;
 int main() {
     int num = 1000000;
 
-    GLOB_LOG_CONFIG.setFile("./log/test");
+    GLOB_LOG_CONFIG.setFile("./bench");
     GLOB_LOG_CONFIG.setConsole(false);
     GLOB_LOG_CONFIG.setRollSize(1024 * 1024 * 64);
 
