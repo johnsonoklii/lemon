@@ -23,7 +23,7 @@ void Timer::run() {
 
 void Timer::restart(Timestamp now) {
     if (m_repeat) {
-        m_expiration = Timestamp::addTime(now, m_interval);
+        m_expiration = Timestamp::addTime_MilliSecond(now, m_interval);
     }
     else {
         m_expiration = Timestamp::invalid();

@@ -51,7 +51,8 @@ void resetTimerfd(int timerfd, Timestamp expiration) {
 void readTimerfd(int timerfd, Timestamp now) {
     uint64_t howmany;
     ssize_t n = ::read(timerfd, &howmany, sizeof howmany);
-    LOG_INFO("TimerSet::readTimerfd howmany: %lu at %s\n", howmany, now.toString().c_str());
+    LOG_DEBUG("TimerSet::readTimerfd howmany: %lu at %s\n", howmany, now.toString().c_str());
+    (void)now;
     if (n != sizeof howmany) {
         LOG_ERROR("TimerSet::readTimerfd reads %zd bytes instead of 8\n", n);
     }

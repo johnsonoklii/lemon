@@ -26,7 +26,9 @@ TcpConnection::TcpConnection(EventLoop* loop,
  , m_channel(new Channel(loop, sockfd))
  , m_localAddr(localAddr)
  , m_peerAddr(peerAddr)
- , m_highWaterMark(64 * 1024 * 1024) {
+ , m_highWaterMark(64 * 1024 * 1024)
+ , m_lastReadTime(Timestamp::now())
+ , m_timeout(-1) {
 
     if (m_triMode == 0) {
         m_channel->setReadCallback(std::bind(&TcpConnection::handleReadLT, this, std::placeholders::_1));
@@ -189,6 +191,8 @@ void TcpConnection::handleReadLT(Timestamp receiveTime) {
     ssize_t n = m_inputBuffer.readFd(m_channel->fd(), &saveErrno);
     if (n > 0) {
         m_messageCallback(shared_from_this(), &m_inputBuffer, receiveTime);
+        // FIXME: 加锁？
+        m_lastReadTime = receiveTime;
     } else if (n == 0) {
         handleClose();
     } else {
@@ -205,6 +209,8 @@ void TcpConnection::handleReadET(Timestamp receiveTime) {
         ssize_t n = m_inputBuffer.readFd(m_channel->fd(), &saveErrno);
         if (n > 0) {
             m_messageCallback(shared_from_this(), &m_inputBuffer, receiveTime);
+            // FIXME: 加锁？
+            m_lastReadTime = receiveTime;
         } else if (n == 0) {
             handleClose();
             break;
@@ -355,4 +361,18 @@ void TcpConnection::handleError() {
     }
 
     LOG_ERROR("TcpConnection::handleError name=%s - SO_ERROR=%d\n", m_name.c_str(), err);
+}
+
+
+void TcpConnection::forceClose() {
+    if (m_state == kConnected || m_state == kDisconnecting) {
+        m_loop->queueInLoop(std::bind(&TcpConnection::forceCloseInLoop, shared_from_this()));
+    }
+}
+
+void TcpConnection::forceCloseInLoop() {
+    m_loop->assertInLoopThread();
+    if (m_state == kConnected || m_state == kDisconnecting) {
+        handleClose();
+    }
 }

@@ -30,7 +30,7 @@ private:
     Logger();
     void init();
 
-    const char* getLevelStr() const;
+    const char* getLevelStr(LogLevel level) const;
     LogLevel getLevel() const;
     bool isConsole() const;
     bool isAsync() const;
