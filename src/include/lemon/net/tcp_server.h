@@ -93,7 +93,8 @@ private:
     std::once_flag m_started;
     int m_next_connid;
     ConnectionMap m_connections; 
-    std::set<std::pair<Timestamp*, TcpConnectionPtr>> m_activeConns;// FIXME：conn超时，是否再使用一个最小堆/哈希表记录？这样可以减少遍历
+    // std::set<std::pair<Timestamp*, TcpConnectionPtr>> m_activeConns;// FIXME：conn超时，是否再使用一个最小堆/哈希表记录？这样可以减少遍历
+    std::set<TcpConnectionPtr> m_activeConns;
     int64_t m_conn_timeout; // 毫秒
 };
 
