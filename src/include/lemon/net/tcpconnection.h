@@ -94,7 +94,8 @@ public:
     void forceClose();
     void forceCloseInLoop();
 
-    Timestamp lastReadTime() { return m_lastReadTime; }
+    Timestamp* lastReadTime() { return &m_lastReadTime; }
+    
 
 private:
     enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };

@@ -41,6 +41,8 @@ public:
     bool valid() const { return m_data != nullptr; }
 
     int avail() { return static_cast<int>(endAddr() - m_current); }
+
+    bool hasData() const { return m_current != m_data; }
     
     void push(const inner_message& msg) {
         if (avail() > 0) {

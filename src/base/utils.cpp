@@ -36,5 +36,18 @@ pid_t ProcessInfo::tid() {
    return t_cached_tid;
 }
 
+// StringUtil
+std::string StringUtil::trim(const std::string& str) {
+   size_t start = str.find_first_not_of(" \t\n\r");
+   size_t end = str.find_last_not_of(" \t\n\r");
+
+   // 如果字符串全是空格，则返回空字符串
+   if (start == std::string::npos) {
+       return "";
+   }
+
+   return str.substr(start, end - start + 1);
+}
+
 }
 }

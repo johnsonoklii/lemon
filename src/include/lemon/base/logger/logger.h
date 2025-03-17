@@ -48,9 +48,9 @@ private:
 #define LOG_DEBUG(fmt, ...) \
     do { \
         GLOB_LOG_CONFIG.setLevel(LogLevel::DEBUG); \
-        char buf[1024]; \
-        snprintf(buf, sizeof(buf), fmt, ##__VA_ARGS__); \
-        Logger::getInstance().log(LogLevel::DEBUG, __FILE__, __LINE__, ProcessInfo::tid(), buf); \
+        char bufxxx159[1024]; \
+        snprintf(bufxxx159, sizeof(bufxxx159), fmt, ##__VA_ARGS__); \
+        Logger::getInstance().log(LogLevel::DEBUG, __FILE__, __LINE__, ProcessInfo::tid(), bufxxx159); \
     } while (0)
 #else
 #define LOG_DEBUG(fmt, ...)
@@ -58,30 +58,30 @@ private:
 
 #define LOG_INFO(fmt, ...) \
     do { \
-        char buf[1024]; \
-        snprintf(buf, sizeof(buf), fmt, ##__VA_ARGS__); \
-        Logger::getInstance().log(LogLevel::INFO, __FILE__, __LINE__, ProcessInfo::tid(), buf); \
+        char bufxxx159[1024]; \
+        snprintf(bufxxx159, sizeof(bufxxx159), fmt, ##__VA_ARGS__); \
+        Logger::getInstance().log(LogLevel::INFO, __FILE__, __LINE__, ProcessInfo::tid(), bufxxx159); \
     } while (0)
 
 #define LOG_WARN(fmt, ...) \
     do { \
-        char buf[1024]; \
-        snprintf(buf, sizeof(buf), fmt, ##__VA_ARGS__); \
-        Logger::getInstance().log(LogLevel::WARN, __FILE__, __LINE__, ProcessInfo::tid(), buf); \
+        char bufxxx159[1024]; \
+        snprintf(bufxxx159, sizeof(bufxxx159), fmt, ##__VA_ARGS__); \
+        Logger::getInstance().log(LogLevel::WARN, __FILE__, __LINE__, ProcessInfo::tid(), bufxxx159); \
     } while (0)
 
 #define LOG_ERROR(fmt, ...) \
     do { \
-        char buf[1024]; \
-        snprintf(buf, sizeof(buf), fmt, ##__VA_ARGS__); \
-        Logger::getInstance().log(LogLevel::ERROR, __FILE__, __LINE__, ProcessInfo::tid(), buf); \
+        char bufxxx159[1024]; \
+        snprintf(bufxxx159, sizeof(bufxxx159), fmt, ##__VA_ARGS__); \
+        Logger::getInstance().log(LogLevel::ERROR, __FILE__, __LINE__, ProcessInfo::tid(), bufxxx159); \
     } while (0)
 
 #define LOG_FATAL(fmt, ...) \
     do { \
-        char buf[1024]; \
-        snprintf(buf, sizeof(buf), fmt, ##__VA_ARGS__); \
-        Logger::getInstance().log(LogLevel::FATAL, __FILE__, __LINE__, ProcessInfo::tid(), buf); \
+        char bufxxx159[1024]; \
+        snprintf(bufxxx159, sizeof(bufxxx159), fmt, ##__VA_ARGS__); \
+        Logger::getInstance().log(LogLevel::FATAL, __FILE__, __LINE__, ProcessInfo::tid(), bufxxx159); \
         abort(); \
     } while (0)
 

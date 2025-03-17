@@ -190,6 +190,12 @@ void TcpConnection::handleReadLT(Timestamp receiveTime) {
     int saveErrno = 0;
     ssize_t n = m_inputBuffer.readFd(m_channel->fd(), &saveErrno);
     if (n > 0) {
+        /*
+            FIXME: 必须是shared_from_this
+            如果conn超时3s没发送数据，主线程会删除conn(析构)，
+            但在删除前,conn又发送了一个消息，导致进入了read方法，
+            此时如果主线程析构了conn，就会出错
+        */ 
         m_messageCallback(shared_from_this(), &m_inputBuffer, receiveTime);
         // FIXME: 加锁？
         m_lastReadTime = receiveTime;
@@ -312,7 +318,7 @@ void TcpConnection::handleWriteET() {
                 }
                 break;
             } else {
-                // TODO: 在ET模式下，需要如果不可写，需要重新注册可写事件
+                // TODO: 在ET模式下，如果不可写，需要重新注册可写事件
                 if ((errno == EAGAIN || errno == EWOULDBLOCK) && m_outputBuffer.readableBytes() > 0) {
                     m_channel->enableWriting();
                 } else if (errno == EPIPE || errno == ECONNRESET) {

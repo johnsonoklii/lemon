@@ -30,6 +30,9 @@ endforeach()
 add_subdirectory(net/rpc/callee)
 add_subdirectory(net/rpc/caller)
 
+# http
+add_subdirectory(net/http)
+
 # file(GLOB_RECURSE RPC_SRCS net/rpc/*.cpp)
 # foreach(RPC_SRC_FILE ${RPC_SRCS})
 #     get_filename_component(RPC_BASE_NAME ${RPC_SRC_FILE} NAME_WE)  

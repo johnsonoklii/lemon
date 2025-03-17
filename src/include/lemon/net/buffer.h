@@ -57,6 +57,11 @@ public:
         return begin() + m_readerIndex;
     }
 
+    const char* findCRLF() const {
+        const char* crlf = std::search(peek(), beginWrite(), kCRLF, kCRLF + 2);
+        return crlf == beginWrite() ? nullptr : crlf;
+    }
+
     void retrieve(size_t len) {
         assert(len <= readableBytes());
         if (len < readableBytes()) {
@@ -100,6 +105,12 @@ public:
         m_writerIndex = kCheapPrepend;
     }
 
+    void retrieveUntil(const char* end) {
+        assert(peek() <= end);
+        assert(end <= beginWrite());
+        retrieve(end - peek());
+    }
+
     void append(const char* data, size_t len) {
         ensureWritableBytes(len);
         std::copy(data, data+len, beginWrite());
@@ -128,6 +139,10 @@ public:
     }
 
     ssize_t readFd(int fd, int* saveErrno);
+
+    std::string toString() const {
+        return std::string(peek(), readableBytes());
+    }
 
 private:
 
