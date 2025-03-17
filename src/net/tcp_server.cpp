@@ -83,8 +83,8 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
         conn->setTimeout(m_conn_timeout);
     }
 
-    std::pair<Timestamp*, TcpConnectionPtr> pair = std::make_pair(conn->lastReadTime(), conn);
-    m_activeConns.insert(pair);
+    // std::pair<Timestamp*, TcpConnectionPtr> pair = std::make_pair(conn->lastReadTime(), conn);
+    m_activeConns.insert(conn);
 
     assert(m_connections.size() == m_activeConns.size());
     
@@ -107,8 +107,8 @@ void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& conn) {
     size_t n = m_connections.erase(conn->name());
     assert(n == 1);
     
-    std::pair<Timestamp*, TcpConnectionPtr> pair = std::make_pair(conn->lastReadTime(), conn);
-    m_activeConns.erase(pair);
+    // std::pair<Timestamp*, TcpConnectionPtr> pair = std::make_pair(conn->lastReadTime(), conn);
+    m_activeConns.erase(conn);
 
     assert(m_connections.size() == m_activeConns.size());
 
@@ -147,13 +147,14 @@ void TcpServer::timeoutConnection2() {
     Timestamp now = Timestamp::now();
     while (!m_activeConns.empty()) {
         auto it = m_activeConns.begin();
-        int64_t pad = now.milliSecondsSinceEpoch() - it->second->lastReadTime()->milliSecondsSinceEpoch();
+        // int64_t pad = now.milliSecondsSinceEpoch() - it->second->lastReadTime()->milliSecondsSinceEpoch();
+        int64_t pad = now.milliSecondsSinceEpoch() - (*it)->lastReadTime()->milliSecondsSinceEpoch();
 
-        if (pad < it->second->timeout()) break;
+        if (pad < (*it)->timeout()) break;
         
         LOG_WARN("TcpServer::timeoutConnection2 [%s] - connection [%s] from %s\n",
-                 m_name.c_str(), it->second->name().c_str(), it->second->peerAddress().getIpPort().c_str());
-        it->second->forceClose(); 
+                 m_name.c_str(), (*it)->name().c_str(), (*it)->peerAddress().getIpPort().c_str());
+        (*it)->forceClose(); 
         m_activeConns.erase(it); // FIXME: 这里不移除m_activeConns，会死循环，因为forceClose需要等到下一次才被激活
     }
 }
