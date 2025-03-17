@@ -83,7 +83,7 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
         conn->setTimeout(m_conn_timeout);
     }
 
-    std::pair<Timestamp, TcpConnectionPtr> pair = std::make_pair(conn->lastReadTime(), conn);
+    std::pair<Timestamp*, TcpConnectionPtr> pair = std::make_pair(conn->lastReadTime(), conn);
     m_activeConns.insert(pair);
 
     assert(m_connections.size() == m_activeConns.size());
@@ -107,7 +107,7 @@ void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& conn) {
     size_t n = m_connections.erase(conn->name());
     assert(n == 1);
     
-    std::pair<Timestamp, TcpConnectionPtr> pair = std::make_pair(conn->lastReadTime(), conn);
+    std::pair<Timestamp*, TcpConnectionPtr> pair = std::make_pair(conn->lastReadTime(), conn);
     m_activeConns.erase(pair);
 
     assert(m_connections.size() == m_activeConns.size());
@@ -120,14 +120,16 @@ void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& conn) {
 
 void TcpServer::setConnTimeout(int64_t conn_timeout) {
     m_conn_timeout = conn_timeout;
-    m_loop->runEvery(m_conn_timeout, std::bind(&TcpServer::timeoutConnection2, this));
+    if (m_conn_timeout > 0) {
+        m_loop->runEvery(m_conn_timeout, std::bind(&TcpServer::timeoutConnection2, this));
+    }
 }
 
 void TcpServer::timeoutConnection() {
     for (auto it : m_connections) {
-        Timestamp last_read_time =  it.second->lastReadTime();
+        Timestamp* last_read_time =  it.second->lastReadTime();
 
-        int64_t pad_sec = Timestamp::now().milliSecondsSinceEpoch() - last_read_time.milliSecondsSinceEpoch();
+        int64_t pad_sec = Timestamp::now().milliSecondsSinceEpoch() - last_read_time->milliSecondsSinceEpoch();
         int64_t timeout = it.second->timeout();
 
         LOG_INFO("pad_sec = %ld, timeout = %ld\n", pad_sec, timeout);
@@ -145,7 +147,7 @@ void TcpServer::timeoutConnection2() {
     Timestamp now = Timestamp::now();
     while (!m_activeConns.empty()) {
         auto it = m_activeConns.begin();
-        int64_t pad = now.milliSecondsSinceEpoch() - it->second->lastReadTime().milliSecondsSinceEpoch();
+        int64_t pad = now.milliSecondsSinceEpoch() - it->second->lastReadTime()->milliSecondsSinceEpoch();
 
         if (pad < it->second->timeout()) break;
         

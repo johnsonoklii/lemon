@@ -35,7 +35,10 @@ public:
     }
 
     bool operator==(const Timestamp& rhs) const {
-        return m_systemTimePoint == rhs.m_systemTimePoint;
+        return m_systemTimePoint == rhs.m_systemTimePoint 
+            || microSecondsSinceEpoch() == rhs.microSecondsSinceEpoch()
+            || milliSecondsSinceEpoch() == rhs.milliSecondsSinceEpoch()
+            || secondsSinceEpoch() == rhs.secondsSinceEpoch();
     }
 
 private:
