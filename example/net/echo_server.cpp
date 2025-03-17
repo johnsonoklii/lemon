@@ -16,7 +16,6 @@ public:
         m_tcpServer.setThreadNum(3);
 
         m_tcpServer.setConnTimeout(5000); // 5000毫秒
-
     }
 
     void start() {
