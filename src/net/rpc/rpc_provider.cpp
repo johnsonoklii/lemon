@@ -99,6 +99,7 @@ void RpcProvider::onMessage(const TcpConnectionPtr& conn, Buffer* buffer, Timest
         conn->setContext("RpcParseState", state);
     }
 
+    // FIXME: 还是有问题，参考http的解析，应该使用状态机的方式
     while(true) {
         if (state->header_size == 0) {
             // 读取header_size
@@ -120,7 +121,7 @@ void RpcProvider::onMessage(const TcpConnectionPtr& conn, Buffer* buffer, Timest
                 state->args_size = header.args_size();
             } else {
                 LOG_ERROR("RpcProvider::onMessage() parse header error!");
-                return;
+                return; // FIXME: 如果出错，应该关闭连接？
             }
 
             // 读取args_str
