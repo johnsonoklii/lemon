@@ -1,6 +1,8 @@
 #ifndef LEMON_UTILS_H
 #define LEMON_UTILS_H
 
+#include <string>
+
 #include <sys/types.h>
 
 namespace lemon {
@@ -16,6 +18,10 @@ struct Util
 struct ProcessInfo {
     static const char* getHostName();
     static pid_t tid();
+};
+
+struct StringUtil {
+    static std::string trim(const std::string& str);
 };
 
 

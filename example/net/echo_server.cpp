@@ -9,11 +9,13 @@ using namespace lemon::net;
 class EchoServer {
 public:
     EchoServer(EventLoop* loop, const InetAddress& listenAddr, const std::string& name)
-        : m_tcpServer(loop, listenAddr, name, TcpServer::ET) {
+        : m_tcpServer(loop, listenAddr, name, TcpServer::LT) {
         m_tcpServer.setConnectionCallback(std::bind(&EchoServer::onConnection, this, std::placeholders::_1));
         m_tcpServer.setMessageCallback(std::bind(&EchoServer::onMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
         
         m_tcpServer.setThreadNum(3);
+
+        m_tcpServer.setConnTimeout(5000); // 5000毫秒
     }
 
     void start() {

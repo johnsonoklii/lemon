@@ -80,6 +80,9 @@ public:
         m_highWaterMarkCallback = cb; m_highWaterMark = highWaterMark; 
     }
 
+    void setTimeout(int64_t timeout) { m_timeout = timeout; }
+    int64_t timeout() const { return m_timeout; }
+
     Buffer* inputBuffer() { return &m_inputBuffer; }
     Buffer* outputBuffer() { return &m_outputBuffer; }
     
@@ -88,7 +91,11 @@ public:
     // called when TcpServer has removed me from its map
     void connectDestroyed();  // should be called only once
 
+    void forceClose();
+    void forceCloseInLoop();
 
+    Timestamp* lastReadTime() { return &m_lastReadTime; }
+    
 
 private:
     enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
@@ -135,6 +142,10 @@ private:
     Buffer m_outputBuffer;
 
     std::unordered_map<std::string, Context> m_contextMap;
+    Timestamp m_lastReadTime;
+    int64_t m_timeout;
+
+    // std::mutex m_mutex; // FIXME: m_lastReadTime加锁
 };
 
 } // namespace net

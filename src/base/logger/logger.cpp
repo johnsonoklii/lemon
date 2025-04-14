@@ -45,7 +45,7 @@ void Logger::log(LogLevel level, const char* file_name, int line, int thread_id,
     snprintf(buffer, sizeof(buffer), "[%s][%s][%s][%s:%d][thread:%d] %s"
                                     , base::Timestamp::now().toString().data()
                                     , m_name
-                                    , getLevelStr()
+                                    , getLevelStr(level)
                                     , file_name
                                     , line
                                     , thread_id
@@ -61,8 +61,7 @@ void Logger::setConfig(LogConfig::Ptr config) {
     init();
 }
 
-const char* Logger::getLevelStr() const{
-    LogLevel level = m_config ? m_config->getLevel() : GLOB_LOG_CONFIG.getLevel();
+const char* Logger::getLevelStr(LogLevel level) const{
     switch (level) {
         case DEBUG:
             return "DEBUG";
