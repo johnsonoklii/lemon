@@ -108,31 +108,36 @@ void HttpServer::onMessage(const lemon::net::TcpConnectionPtr& conn,
             return;
         }
 
-        if (!context->parseRequest(buf, receiveTime)) {
-            LOG_INFO("HttpServer::onMessage() parseRequest error\n");
-            http::HttpResponse response(true);
-            response.setStatusLine("HTTP/1.1", http::HttpResponse::k400BadRequest, "Bad Request");
-            response.setBody("HTTP/1.1 400 Bad Request\r\n\r\n");
-
-            lemon::net::Buffer buffer;
-            response.appendToBuffer(&buffer);
-
-            if (m_useSSL) {
-                if (m_sslConns.find(conn) != m_sslConns.end()) {
-                    m_sslConns[conn]->send(buffer.toString().data(), buffer.readableBytes());
+        // 这里需要循环, 因为可能有半包, 大于1个包, 需要循环处理
+        while (true) {
+            if (!context->parseRequest(buf, receiveTime)) {
+                LOG_INFO("HttpServer::onMessage() parseRequest error\n");
+                http::HttpResponse response(true);
+                response.setStatusLine("HTTP/1.1", http::HttpResponse::k400BadRequest, "Bad Request");
+                response.setBody("HTTP/1.1 400 Bad Request\r\n\r\n");
+    
+                lemon::net::Buffer buffer;
+                response.appendToBuffer(&buffer);
+    
+                if (m_useSSL) {
+                    if (m_sslConns.find(conn) != m_sslConns.end()) {
+                        m_sslConns[conn]->send(buffer.toString().data(), buffer.readableBytes());
+                    }
+                } else {
+                    conn->send(buffer.toString());
                 }
-            } else {
-                conn->send(buffer.toString());
+    
+                conn->shutdown();
+                m_sslConns.erase(conn);
+                return;
             }
-
-            conn->shutdown();
-            m_sslConns.erase(conn);
-            return;
-        }
-
-        if (context->gotAll()) {
-            onRequest(conn, context->request());
-            context->reset();
+    
+            if (context->gotAll()) {
+                onRequest(conn, context->request());
+                context->reset();
+            } else {
+                return;
+            }
         }
     } catch( const std::exception& e) {
         LOG_ERROR("HttpServer::onMessage() %s\n", e.what());
